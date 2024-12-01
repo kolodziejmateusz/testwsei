@@ -1,0 +1,26 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t my-nginx-image .
+
+      - name: Test Docker image
+        run: docker run --rm -d -p 8080:80 my-nginx-image && sleep 5 && curl -f http://localhost:8080
+
+      - name: Clean up
+        run: docker system prune -f
