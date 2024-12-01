@@ -1,10 +1,7 @@
-name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages from main
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
@@ -16,21 +13,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "16"
-
-      - name: Install dependencies
-        run: npm install --global http-server
-
       - name: Build static site
         run: |
-          mkdir dist
-          cp -r ./*.html ./*.css dist/
+          mkdir -p docs
+          cp -r ./*.html ./*.css docs/
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          git commit -m "Update GitHub Pages"
+          git push
